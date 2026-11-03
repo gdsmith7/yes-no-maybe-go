@@ -184,6 +184,10 @@ func (w *walkState) walkExpr1(n ir.Node, init *ir.Nodes) ir.Node {
 		n := n.(*ir.LogicalExpr)
 		return w.walkLogical(n, init)
 
+	case ir.OTERNARY:
+		n := n.(*ir.TernaryExpr)
+		return w.walkTernary(n, init)
+
 	case ir.OPRINT, ir.OPRINTLN:
 		return w.walkPrint(n.(*ir.CallExpr), init)
 
@@ -944,6 +948,20 @@ func (w *walkState) walkLogical(n *ir.LogicalExpr, init *ir.Nodes) ir.Node {
 
 	n.Y = w.walkExpr(n.Y, &ll)
 	n.Y = ir.InitExpr(ll, n.Y)
+	return n
+}
+
+func (w *walkState) walkTernary(n *ir.TernaryExpr, init *ir.Nodes) ir.Node {
+	n.Cond = w.walkExpr(n.Cond, init)
+
+	var thenInit ir.Nodes
+	n.Then = w.walkExpr(n.Then, &thenInit)
+	n.Then = ir.InitExpr(thenInit, n.Then)
+
+	var elseInit ir.Nodes
+	n.Else = w.walkExpr(n.Else, &elseInit)
+	n.Else = ir.InitExpr(elseInit, n.Else)
+
 	return n
 }
 

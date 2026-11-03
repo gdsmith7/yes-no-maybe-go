@@ -59,6 +59,11 @@ func (e *escape) exprSkipInit(k hole, n ir.Node) {
 		n := n.(*ir.LogicalExpr)
 		e.discard(n.X)
 		e.discard(n.Y)
+	case ir.OTERNARY:
+		n := n.(*ir.TernaryExpr)
+		e.discard(n.Cond)
+		e.expr(k, n.Then)
+		e.expr(k, n.Else)
 	case ir.OADDR:
 		n := n.(*ir.AddrExpr)
 		e.expr(k.addr(n, "address-of"), n.X) // "address-of"

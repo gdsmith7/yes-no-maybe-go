@@ -253,6 +253,11 @@ type (
 		expr
 	}
 
+	TernaryOperation struct {
+		Cond, Then, Else Expr
+		expr
+	}
+
 	// Fun(ArgList[0], ArgList[1], ...)
 	CallExpr struct {
 		Fun     Expr

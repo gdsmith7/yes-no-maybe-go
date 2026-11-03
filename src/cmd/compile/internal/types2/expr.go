@@ -355,6 +355,10 @@ func (check *Checker) updateExprType(x syntax.Expr, typ Type, final bool) {
 			check.updateExprType(x.Y, typ, final)
 		}
 
+	case *syntax.TernaryOperation:
+		check.updateExprType(x.Then, typ, final)
+		check.updateExprType(x.Else, typ, final)
+
 	default:
 		panic("unreachable")
 	}
@@ -1250,6 +1254,41 @@ func (check *Checker) exprInternal(T *target, x *operand, e syntax.Expr) exprKin
 		if !x.isValid() {
 			goto Error
 		}
+
+	case *syntax.TernaryOperation:
+		var cond operand
+		check.expr(nil, &cond, e.Cond)
+		if !cond.isValid() {
+			goto Error
+		}
+		if !allBoolean(cond.typ()) {
+			check.error(e.Cond, InvalidCond, "non-boolean condition in ternary statement")
+			goto Error
+		}
+
+		var then operand
+		check.expr(nil, &then, e.Then)
+		if !then.isValid() {
+			goto Error
+		}
+
+		var els operand
+		check.expr(nil, &els, e.Else)
+		if !els.isValid() {
+			goto Error
+		}
+
+		check.matchTypes(&then, &els)
+		if !then.isValid() {
+			goto Error
+		}
+		if !Identical(then.typ(), els.typ()) {
+			check.errorf(e.Then, MismatchedTypes, invalidArg+"mismatched types %s (previous argument) and %s (type of %s)", then.typ(), els.typ(), els.expr)
+			goto Error
+		}
+
+		x.typ_ = then.typ_
+		x.mode_ = value
 
 	case *syntax.KeyValueExpr:
 		// key:value expressions are handled in composite literals

@@ -36,6 +36,7 @@ const (
 	_Rbrack    // ]
 	_Rbrace    // }
 	_Comma     // ,
+	_Question  // ?
 	_Semi      // ;
 	_Colon     // :
 	_Dot       // .

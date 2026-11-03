@@ -163,6 +163,11 @@ func (w walker) node(n Node) {
 			w.node(n.Y)
 		}
 
+	case *TernaryOperation:
+		w.node(n.Cond)
+		w.node(n.Then)
+		w.node(n.Else)
+
 	case *CallExpr:
 		w.node(n.Fun)
 		w.exprList(n.ArgList)

@@ -348,6 +348,10 @@ redo:
 		s.op, s.prec = Tilde, 0
 		s.tok = _Operator
 
+	case '?':
+		s.nextch()
+		s.tok = _Question
+
 	default:
 		s.errorf("invalid character %#U", s.ch)
 		s.nextch()

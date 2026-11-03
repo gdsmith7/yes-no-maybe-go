@@ -435,6 +435,24 @@ func (n *LogicalExpr) SetOp(op Op) {
 	}
 }
 
+type TernaryExpr struct {
+	miniExpr
+	Cond Node
+	Then Node
+	Else Node
+}
+
+func NewTernaryExpr(pos src.XPos, cond, then, els Node) *TernaryExpr {
+	n := &TernaryExpr{
+		Cond: cond,
+		Then: then,
+		Else: els,
+	}
+	n.pos = pos
+	n.op = OTERNARY
+	return n
+}
+
 // A MakeExpr is a make expression: make(Type[, Len[, Cap]]).
 // Op is OMAKECHAN, OMAKEMAP, OMAKESLICE, or OMAKESLICECOPY,
 // but *not* OMAKE (that's a pre-typechecking CallExpr).

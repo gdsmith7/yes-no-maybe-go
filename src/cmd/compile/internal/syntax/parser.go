@@ -866,7 +866,25 @@ func (p *parser) expr() Expr {
 		defer p.trace("expr")()
 	}
 
-	return p.binaryExpr(nil, 0)
+	return p.ternaryExpr(p.binaryExpr(nil, 0))
+}
+
+func (p *parser) ternaryExpr(x Expr) Expr {
+	if p.tok != _Question {
+		return x
+	}
+
+	ternary := new(TernaryOperation)
+	ternary.pos = p.pos()
+	ternary.Cond = x
+
+	p.next()
+	ternary.Then = p.expr()
+
+	p.want(_Colon)
+	ternary.Else = p.expr()
+
+	return ternary
 }
 
 // Expression = UnaryExpr | Expression binary_op Expression .

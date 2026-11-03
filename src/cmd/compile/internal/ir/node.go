@@ -309,6 +309,7 @@ const (
 	OGETCALLERSP // internal/runtime/sys.GetCallerSP() (stack pointer in caller frame)
 
 	OEND
+	OTERNARY
 )
 
 // IsCmp reports whether op is a comparison operation (==, !=, <, <=,

@@ -3459,6 +3459,34 @@ func (s *state) exprCheckPtr(n ir.Node, checkPtrOK bool) *ssa.Value {
 
 		s.startBlock(bResult)
 		return s.variable(n, types.Types[types.TBOOL])
+	case ir.OTERNARY:
+		n := n.(*ir.TernaryExpr)
+		cond := s.expr(n.Cond)
+
+		b := s.endBlock()
+		b.Kind = block.BlockIf
+		b.SetControl(cond)
+
+		thenBlock := s.f.NewBlock(block.BlockPlain)
+		elseBlock := s.f.NewBlock(block.BlockPlain)
+		resultBlock := s.f.NewBlock(block.BlockPlain)
+		b.AddEdgeTo(thenBlock)
+		b.AddEdgeTo(elseBlock)
+
+		s.startBlock(thenBlock)
+		then := s.expr(n.Then)
+		s.vars[n] = then
+		b = s.endBlock()
+		b.AddEdgeTo(resultBlock)
+
+		s.startBlock(elseBlock)
+		els := s.expr(n.Else)
+		s.vars[n] = els
+		b = s.endBlock()
+		b.AddEdgeTo(resultBlock)
+
+		s.startBlock(resultBlock)
+		return s.variable(n, n.Type())
 	case ir.OCOMPLEX:
 		n := n.(*ir.BinaryExpr)
 		r := s.expr(n.X)

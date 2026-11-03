@@ -91,6 +91,7 @@ var OpNames = []string{
 	OUNSAFESTRING:     "unsafe.String",
 	OUNSAFESTRINGDATA: "unsafe.StringData",
 	OXOR:              "^",
+	OTERNARY:          "?:",
 }
 
 // GoString returns the Go syntax for the Op, or else its name.
@@ -262,6 +263,7 @@ var OpPrec = []int{
 	OSEND:             3,
 	OANDAND:           2,
 	OOROR:             1,
+	OTERNARY:          0,
 
 	// Statements handled by stmtfmt
 	OAS:         -1,

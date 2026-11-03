@@ -448,6 +448,9 @@ func (p *printer) printRawNode(n Node) {
 			p.print(n.X, blank, n.Op, blank, n.Y)
 		}
 
+	case *TernaryOperation:
+		p.print(n.Cond, blank, _Question, blank, n.Then, blank, _Colon, blank, n.Else)
+
 	case *KeyValueExpr:
 		p.print(n.Key, _Colon, blank, n.Value)
 

@@ -2430,6 +2430,9 @@ func (r *reader) expr() (res ir.Node) {
 		}
 		return typecheck.Expr(ir.NewBinaryExpr(pos, op, x, y))
 
+	case exprTernaryOp:
+		return typecheck.Expr(ir.NewTernaryExpr(r.pos(), r.expr(), r.expr(), r.expr()))
+
 	case exprRecv:
 		x := r.expr()
 		pos := r.pos()

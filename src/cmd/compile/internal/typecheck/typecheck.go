@@ -266,6 +266,23 @@ func typecheck1(n ir.Node, top int) ir.Node {
 		}
 		return n
 
+	case ir.OTERNARY:
+		n := n.(*ir.TernaryExpr)
+		n.Cond, n.Then, n.Else = Expr(n.Cond), Expr(n.Then), Expr(n.Else)
+		if n.Cond.Type() == nil || n.Then.Type() == nil || n.Else.Type() == nil {
+			n.SetType(nil)
+			return n
+		}
+		n.Cond = DefaultLit(n.Cond, nil)
+		if !n.Cond.Type().IsBoolean() {
+			base.Errorf("invalid operation: %v (operator %v not defined on %s)", n, n.Op(), typekind(n.Cond.Type()))
+			n.SetType(nil)
+			return n
+		}
+
+		n.SetType(n.Then.Type())
+		return n
+
 	// logical operators
 	case ir.OANDAND, ir.OOROR:
 		n := n.(*ir.LogicalExpr)

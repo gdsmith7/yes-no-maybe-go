@@ -1370,6 +1370,39 @@ func (o *orderState) expr1(walkstate *walkState, n, lhs ir.Node) ir.Node {
 		o.out = append(o.out, nif)
 		return r
 
+	case ir.OTERNARY:
+		n := n.(*ir.TernaryExpr)
+
+		cond := o.expr(walkstate, n.Cond, nil)
+		condTemp := o.newTemp(walkstate, n.Cond.Type(), false)
+		o.out = append(o.out, typecheck.Stmt(ir.NewAssignStmt(base.Pos, condTemp, cond)))
+
+		r := o.newTemp(walkstate, n.Type(), false)
+
+		saveout := o.out
+		o.out = nil
+		t := o.markTemp()
+		o.edge()
+		lhs := o.expr(walkstate, n.Then, nil)
+		o.out = append(o.out, typecheck.Stmt(ir.NewAssignStmt(base.Pos, r, lhs)))
+		o.popTemp(t)
+		genThen := o.out
+		o.out = saveout
+
+		saveoutElse := o.out
+		o.out = nil
+		tElse := o.markTemp()
+		o.edge()
+		rhs := o.expr(walkstate, n.Else, nil)
+		o.out = append(o.out, typecheck.Stmt(ir.NewAssignStmt(base.Pos, r, rhs)))
+		o.popTemp(tElse)
+		genElse := o.out
+		o.out = saveoutElse
+
+		nif := ir.NewIfStmt(base.Pos, condTemp, genThen, genElse)
+		o.out = append(o.out, nif)
+		return r
+
 	case ir.OCALLMETH:
 		base.FatalfAt(n.Pos(), "OCALLMETH missed by typecheck")
 		panic("unreachable")
