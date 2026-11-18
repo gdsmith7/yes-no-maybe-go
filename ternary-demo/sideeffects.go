@@ -1,12 +1,12 @@
 package main
 
-func loud(x int, name string) int {
-	println("  evaluated", name)
-	return x
+func loud(result string) string {
+	println("  evaluated", result)
+	return result
 }
 
-func choose(cond bool) int {
-	return cond ? loud(10, "then") : loud(20, "else")
+func choose(cond bool) string {
+	return cond ? loud("then") : loud("else")
 }
 
 func main() {

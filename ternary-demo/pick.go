@@ -1,10 +1,10 @@
 package main
 
-func pick(cond bool, a, b int) int {
-	return cond ? a : b
+func pick(cond bool) string {
+	return cond ? "then" : "else"
 }
 
 func main() {
-	println(pick(true, 1, 2))
-	println(pick(false, 1, 2))
+	println(pick(true))
+	println(pick(false))
 }
